@@ -11,6 +11,7 @@ pair<vector<vector<int>>,pair<vector<vector<bool>>,vector<vector<bool>>>> lilith
         vector<int> time_cost, 
         vector<pair<int,int>> gift_coef, 
         vector<int> stone_for_gift,
+        bool include_first_day,
         int &diamond_required) {
 
     // Create the MIP Solver with the CBC backend.
@@ -42,6 +43,14 @@ pair<vector<vector<int>>,pair<vector<vector<bool>>,vector<vector<bool>>>> lilith
     LOG(INFO) << "Number of variables = " << solver.NumVariables();
 
     // Create Constraints 
+    if(!include_first_day)
+    {
+        for(uint32_t i=0;i<time_interval.size();i++)
+        {
+            MPConstraint* temp = solver.MakeRowConstraint(0,0,"(0,"+to_string(i)+")=0");
+            temp->SetCoefficient(num_of_times[0][i],1);
+        }
+    }
     vector<MPConstraint*> ActivateConstraint;
     for(int i=0;i<day;i++)
     {
@@ -189,6 +198,9 @@ int main(int argc, char** argv) {
     vector<pair<int,int>> coef_extra_gift = {{10,30},{20,60},{30,150},{30,150},{30,180}};
     vector<int> diamond = {20,40,100,100,120};
     int diamond_required;
+    cout<<"請輸入是否要計算首日:\n";
+    bool calculating_first_day;
+    cin>>calculating_first_day;
     pair<vector<vector<int>>,pair<vector<vector<bool>>,vector<vector<bool>>>> result_for_return =
             operations_research::lilith_mip_program(
             event_day,
@@ -198,6 +210,7 @@ int main(int argc, char** argv) {
             interval_cost,
             coef_extra_gift,
             diamond,
+            calculating_first_day,
             diamond_required);
 
     vector<vector<int>> sol_times = result_for_return.first;
@@ -209,33 +222,36 @@ int main(int argc, char** argv) {
 
     for(int i=0;i<event_day;i++)
     {
-        int total_time = 0;
-        for(int j=0;j<sol_times[i].size();j++)
+        if(calculating_first_day || i!=0)
         {
-        total_time += sol_times[i][j];
-        }
-        cout<<"第"<<i+1<<"天: 通關"<<total_time<<"次";
-        vector<int> have_buy;
-        for(int j=0;j<sol_buy[i].size();j++)
-        {
-        if(sol_buy[i][j] == 1)
-            have_buy.push_back(j);
-        }
+            int total_time = 0;
+            for(int j=0;j<sol_times[i].size();j++)
+            {
+            total_time += sol_times[i][j];
+            }
+            cout<<"第"<<i+1<<"天: 通關"<<total_time<<"次";
+            vector<int> have_buy;
+            for(int j=0;j<sol_buy[i].size();j++)
+            {
+            if(sol_buy[i][j] == 1)
+                have_buy.push_back(j);
+            }
 
-        if(have_buy.size() == 0)
-        cout<<" 不買情報屋的饋贈\n";
-        else if(have_buy.size() == 1)
-        {
-        cout<<" 買第 "<<have_buy[0]+1<<" 次\n";
-        }
-        else
-        {
-        cout<<" 買第";
-        for(int j=0;j<have_buy.size();j++)
-        {
-            cout<<" "<<have_buy[j]+1;
-        }
-        cout<<" 次"<<endl;
+            if(have_buy.size() == 0)
+            cout<<" 不買情報屋的饋贈\n";
+            else if(have_buy.size() == 1)
+            {
+            cout<<" 買第 "<<have_buy[0]+1<<" 次\n";
+            }
+            else
+            {
+            cout<<" 買第";
+            for(int j=0;j<have_buy.size();j++)
+            {
+                cout<<" "<<have_buy[j]+1;
+            }
+            cout<<" 次"<<endl;
+            }
         }
     }
 
