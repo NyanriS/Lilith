@@ -100,7 +100,14 @@ pair<vector<vector<int>>,pair<vector<vector<bool>>,vector<vector<bool>>>> lilith
 
     // Objective function: Minimize the consumption of the diamonds.
     MPObjective* const objective = solver.MutableObjective();
-    for(int i=0;i<day;i++)
+    objective->SetCoefficient(num_of_times[0][0],0);
+    objective->SetCoefficient(buy_or_not[0][0],stone_for_gift[0]);
+    for(int j=1;j<time_interval.size();j++)
+    {
+        objective->SetCoefficient(num_of_times[0][j],time_cost[j]);
+        objective->SetCoefficient(buy_or_not[0][j],stone_for_gift[j]);
+    }
+    for(int i=1;i<day;i++)
     {
         for(int j=0;j<time_interval.size();j++)
         {
@@ -174,8 +181,11 @@ int main(int argc, char** argv) {
     int gift_require;
     cout<<"請輸入需要的線索量:\n";
     cin>>gift_require;
+    int first_interval_cost;
+    cout<<"請輸入前五次需要的鑽石量:\n";
+    cin>>first_interval_cost;
     vector<int> interval_length = {5, 10, 20, 30, 40};
-    vector<int> interval_cost = {0,10,15,20,20};
+    vector<int> interval_cost = {first_interval_cost,10,15,20,20};
     vector<pair<int,int>> coef_extra_gift = {{10,30},{20,60},{30,150},{30,150},{30,180}};
     vector<int> diamond = {20,40,100,100,120};
     int diamond_required;
