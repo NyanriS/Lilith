@@ -190,13 +190,10 @@ int main(int argc, char** argv) {
     int gift_require;
     cout<<"請輸入需要的線索量:\n";
     cin>>gift_require;
-    int first_interval_cost;
-    cout<<"請輸入前五次需要的鑽石量:\n";
-    cin>>first_interval_cost;
-    vector<int> interval_length = {5, 10, 20, 30, 40};
-    vector<int> interval_cost = {first_interval_cost,10,15,20,20};
-    vector<pair<int,int>> coef_extra_gift = {{10,30},{20,60},{30,150},{30,150},{30,180}};
-    vector<int> diamond = {20,40,100,100,120};
+    vector<int> interval_length = {5, 10, 15, 20, 30, 40};
+    vector<int> interval_cost = {10 ,15, 15, 20, 20, 20};
+    vector<pair<int,int>> coef_extra_gift = {{10,30},{20,60},{0,0},{30,150},{30,150},{30,180}};
+    vector<int> diamond = {20,40,0,100,100,120};
     int diamond_required;
     cout<<"請輸入是否要計算首日:\n";
     bool calculating_first_day;
