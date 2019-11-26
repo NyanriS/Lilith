@@ -219,6 +219,11 @@ int main(int argc, char** argv) {
 
     for(int i=0;i<event_day;i++)
     {
+        sol_buy[i].erase(sol_buy[i].begin()+2);
+    }
+
+    for(int i=0;i<event_day;i++)
+    {
         if(calculating_first_day || i!=0)
         {
             int total_time = 0;
